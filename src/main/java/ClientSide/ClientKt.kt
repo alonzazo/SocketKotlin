@@ -41,27 +41,41 @@ class ClientKt {
                 when (textParts[0]){
                     "TRANSMITIR" -> {
                         //Analizamos el path de la entrada
+                        if (textParts.size > 1){
+                            when (textParts.size){
+                                2 -> {
+                                    //Creación de archivos
+                                    for (i in 1..textParts[1].toInt())
+                                        GeneradorArchivo.getInstance().generateRandomSizeFile();
+                                    println("Tamaño medio generado fue de ${GeneradorArchivo.getInstance().meanSize} KB\n")
+                                }
+                                else -> {
+                                    //Creación de archivos
+                                    for (i in 1..textParts[1].toInt())
+                                        GeneradorArchivo.getInstance().generateFileOfSpecificSize(textParts[2].toInt())
+                                    println("Tamaño medio generado fue de ${GeneradorArchivo.getInstance().meanSize} KB\n")
+                                }
+                            }
 
-                        //Creación de archivos
-                        for (i in 0..textParts[1].toInt())
-                            GeneradorArchivo.getInstance().generateRandomSizeFile();
-                        println("Tamaño medio generado fue de ${GeneradorArchivo.getInstance().meanSize} KB\n")
+                            //Inicializamos el registro de tiempos
+                            val registro = TablaTiempos()
+                            //Vemos si está en el generador de archivos
+                            val listFiles: LinkedList<javafx.util.Pair<Int, String>> = GeneradorArchivo.getInstance().filesList
+                            listFiles.forEach {
+                                //Iniciamos el timer
+                                registro.startTimer()
+                                //Inicia la transmisión
+                                transmitir(it.value, it.key)
+                                //Detenemos el tiempo y registramos
+                                registro.stopTimer()
+                                registro.registerNewTime(it.value,it.key)
+                            }
+                            //Exportamos el registro de tiempos
+                            registro.exportToCSV("registro1")
 
-                        //Inicializamos el registro de tiempos
-                        val registro = TablaTiempos()
-                        //Vemos si está en el generador de archivos
-                        val listFiles: LinkedList<javafx.util.Pair<Int, String>> = GeneradorArchivo.getInstance().filesList
-                        listFiles.forEach {
-                            //Iniciamos el timer
-                            registro.startTimer()
-                            //Inicia la transmisión
-                            transmitir(it.value, it.key)
-                            //Detenemos el tiempo y registramos
-                            registro.stopTimer()
-                            registro.registerNewTime(it.value,it.key)
+                        }else {
+                            println("Ingrese más parámetros")
                         }
-                        //Exportamos el registro de tiempos
-                        registro.exportToCSV("registro1")
 
                     }
 

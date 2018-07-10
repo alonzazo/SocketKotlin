@@ -102,6 +102,27 @@ public class GeneradorArchivo {
         return path;
     }
 
+    public String generateFileOfSpecificSize(int sizeKB){
+
+        countFiles++;
+        String path = String.valueOf(countFiles)  + ".txt";
+        try {
+            PrintWriter writer = new PrintWriter( path, "UTF-8");
+            System.out.println("Starting to write " + path + " file-------------------------------TOTAL SIZE: " + sizeKB + " KB");
+            for (int j = 0; j < sizeKB; j++) {
+                for (int i = 0; i < 1024; i++) writer.print('c');//Escribe 1Kb
+                if (j % (sizeKB/50) == 0) System.out.print("█");
+            }
+            writer.close();
+            System.out.println("\n" + path + " file was written succesfully");
+            filesList.add(new Pair<Integer, String>(sizeKB,path));
+        }catch(Exception e){
+            System.err.println(e.getMessage());
+            e.printStackTrace(System.err);
+        }
+        return path;
+    }
+
     public boolean deleteAllFilesGenerated(){
         for (Pair<Integer, String> fileRef : filesList){
             File file = new File(fileRef.getValue());
